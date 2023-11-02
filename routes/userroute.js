@@ -2,5 +2,6 @@ express=require('express')
 const usercontrollers = require('../controllers/usercontroller')
 router=express.Router()
 
-router.post('/',usercontrollers.add)
+router.post('/signup',usercontrollers.signup)
+router.post('/login',usercontrollers.login)
 module.exports=router
