@@ -18,7 +18,7 @@ function details(event)
     })
     .catch((err)=>{
        const failuremessage=document.getElementById("failuremessage")
-       failuremessage.innerHTML="User Already exists"
+       failuremessage.innerHTML="Login failed"
   
     })
 }
