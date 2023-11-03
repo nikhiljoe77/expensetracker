@@ -15,6 +15,8 @@ function details(event)
     axios.post(`${url}/login`, user)
     .then(()=>{
         window.alert("Login successful!");
+       // window.location="/expense/getfile"
+        window.location.href="expensetracker.html"
     })
     .catch((err)=>{
        const failuremessage=document.getElementById("failuremessage")
