@@ -13,12 +13,15 @@ function details(event)
     }
     console.log(user)
     axios.post(`${url}/login`, user)
-    .then(()=>{
-        window.alert("Login successful!");
-       // window.location="/expense/getfile"
+    .then((response)=>{
+        alert(response.data.message);
+        console.log(response.data)
+        localStorage.setItem('token',response.data.token)
         window.location.href="expensetracker.html"
+       
     })
     .catch((err)=>{
+        console.log(JSON.stringify(err))
        const failuremessage=document.getElementById("failuremessage")
        failuremessage.innerHTML="Login failed"
   

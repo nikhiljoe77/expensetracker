@@ -2,6 +2,7 @@ const Expenseuser=require('../models/expensemodels')
 const path=require("path")
 exports.add=(req,res,next)=>{
     console.log("adding")
+   
    // console.error(req.body,'i m body')
     //console.log(req.body.expenseamount)
     console.log(req.body.description)
@@ -9,7 +10,8 @@ exports.add=(req,res,next)=>{
    
     Expenseuser.create({
         expenseamount:req.body.expenseamount,
-        description:req.body.description
+        description:req.body.description,
+        userId:req.user.id
 })
 .then(result=>{
 res.json(result)
@@ -20,14 +22,25 @@ res.json(result)
 
 }
 exports.delete=(req,res,next)=>{
-    Expenseuser.findByPk(req.params.id)
-    .then(expenseuser=>{
-        return expenseuser.destroy()
-    }).then(result=>{
+   // Expenseuser.findByPk(req.params.id)
+   const expenseid=req.params.id
+   console.log("this is id",expenseid)
+   if(expenseid==undefined||expenseid.length===0){
+    return res.status(400).json({success:false})
+   }
+   Expenseuser.destroy({where:{id:expenseid,userId:req.user.id}})
+   .then((noofrows)=>{
+    console.log("this is user id",req.user.id)
+    console.log(noofrows)
+    if(noofrows===0){
+      return res.status(404).json({success:false,message:"Expense doent belong to the user"})
+    }
         console.log('Destroyed expense')
-        res.json(result)
+        res.status(200).json({success:true,message:"Deleted Successfully"})
     })
-    .catch(err=>console.log(err))
+    .catch(err=>{console.log(err)
+    return res.status(500).json({success:true,message:"Failed"})
+    })
 }
 
 exports.edit=(req,res,next)=>{
@@ -46,20 +59,9 @@ exports.edit=(req,res,next)=>{
 }
 exports.get = (req, res, next) => {
     console.log("I am getting");
-    Expenseuser.findAll()
+    Expenseuser.findAll({where:{userId:req.user.id}})                                           
       .then(expenseusers => {
         res.json(expenseusers);
-      })
-      .catch(err => {
-        console.log(err);
-        res.status(500).json({ error: 'An error occurred while fetching expenses' });
-      });
-  };
-  exports.getfile = (req, res, next) => {
-    console.log("I am getting");
-    Expenseuser.findAll()
-      .then(expenseusers => {
-        res.sendFile(path.join(__dirname,'public','..', 'expensetracker.html'))
       })
       .catch(err => {
         console.log(err);

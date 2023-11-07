@@ -2,23 +2,27 @@
 //activityon
 //renderExpenseList()
 //const expenses = JSON.parse(localStorage.getItem('expenses')) || [];
-window.addEventListener("DOMContentLoaded",()=>{
-  axios.get("http://localhost:4000/expense/")
-  .then((response) => {
-    console.log(" i am the user",response)
-    for(var i=0;i<response.data.length;i++)
-    renderExpenseList(response.data[i])
-    
+window.addEventListener("DOMContentLoaded", () => {
+  const token = localStorage.getItem('token');
+  axios.get("http://localhost:4000/expense/", {
+    headers: { "Authorization": token }
   })
-  .catch((err) => {
-    console.log(err)
-  })
-})
+    .then((response) => {
+      console.log("I am the user", response);
+      for (var i = 0; i < response.data.length; i++) {
+        renderExpenseList(response.data[i]);
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
 var submitButton = document.getElementById('submitButton')
 submitButton.addEventListener("click",addExpense)
 
 // Function to add an expense
-function addExpense() {
+function addExpense(event) {
   event.preventDefault()
   console.log("addexpense is working")
   const expenseamount = document.getElementById('expenseamount').value;
@@ -33,10 +37,13 @@ console.log(expense)
   {
   /*expenses.push(expense);
   saveExpensesToLocalStorage();*/
-  axios.post("http://localhost:4000/expense/",expense)
+  const token = localStorage.getItem('token');
+  axios.post("http://localhost:4000/expense/",expense, {
+    headers: { "Authorization": token }
+  })
   .then((response) => {
-    renderExpenseList(expense)
     window.location.reload();
+    renderExpenseList(expense) 
     console.log("render is working")
     console.log(response)
   })
@@ -86,6 +93,7 @@ console.log(expense)
   }
 // Function to delete an expense
 function deleteExpense(expense,listItem) {
+  const token = localStorage.getItem('token');
   event.preventDefault()
   //const index = expenses.findIndex(expense => expense.id === id);
  /* if (index !== -1) {
@@ -94,7 +102,9 @@ function deleteExpense(expense,listItem) {
     renderExpenseList(); 
   }*/
   console.log("delete is working")
-  axios.delete(`http://localhost:4000/expense/${expense.id}`)
+  axios.delete(`http://localhost:4000/expense/deleteexpense/${expense.id}`, {
+    headers: { "Authorization": token }
+  })
   .then((response) => {
     // Remove the list item from the user details list
     listItem.parentNode.removeChild(listItem);

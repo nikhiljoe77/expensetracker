@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
+const jwt=require(`jsonwebtoken`)
 
 exports.signup = async (req, res) => {
   console.log('adding');
@@ -20,21 +21,32 @@ exports.signup = async (req, res) => {
   }
 };
 
+function generateAccessToken(id,name)
+{
+  return jwt.sign({userId:id,name:name},`secretencryption`)
+}
 
 exports.login = async (req, res) => {
+
   console.log('logging in');
   try {
     const { email, password } = req.body;
-    const user = await User.findAll({ where: { email } });
+    const user = await User.findAll({ where: { email } })
     
     if (user.length > 0) {
-      if (await bcrypt.compare(password, user[0].password)) {
-        res.status(200).json({ success: true, message: 'User logged in successfully' });
+       bcrypt.compare(password, user[0].password,(err,result)=> {
+        if(err){
+          throw new Error('Something went wrong')
+        }
+        if(result===true)
+        {
+        return res.status(200).json({ success: true, message: 'User logged in successfully',token:generateAccessToken(user[0].id,user[0].name )});
       } else {
-        res.status(400).json({ success: false, message: 'Password is incorrect' });
+        return res.status(400).json({ success: false, message: 'Password is incorrect' });
       }
+    })
     } else {
-      res.status(404).json({ success: false, message: 'User does not exist' });
+      return res.status(404).json({ success: false, message: 'User does not exist' });
     }
   } catch (err) {
     console.error('This is an error', err);
