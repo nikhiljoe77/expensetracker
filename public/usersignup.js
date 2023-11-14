@@ -14,8 +14,9 @@ function details(event)
     }
     console.log(user)
     axios.post(`${url}/signup`, user)
-    .then(()=>{
+    .then((response)=>{
         console.log("posted")
+        alert(response.data.message);
     })
     .catch((err)=>{
        const failuremessage=document.getElementById("failuremessage")

@@ -21,9 +21,9 @@ exports.signup = async (req, res) => {
   }
 };
 
-function generateAccessToken(id,name)
+function generateAccessToken(id,name,ispremiumuser)
 {
-  return jwt.sign({userId:id,name:name},`secretencryption`)
+  return jwt.sign({userId:id,name:name,ispremiumuser:ispremiumuser},`secretencryption`)
 }
 
 exports.login = async (req, res) => {
@@ -40,7 +40,7 @@ exports.login = async (req, res) => {
         }
         if(result===true)
         {
-        return res.status(200).json({ success: true, message: 'User logged in successfully',token:generateAccessToken(user[0].id,user[0].name )});
+        return res.status(200).json({ success: true, message: 'User logged in successfully',token:generateAccessToken(user[0].id,user[0].name,user[0].ispremiumuser )});
       } else {
         return res.status(400).json({ success: false, message: 'Password is incorrect' });
       }
@@ -53,3 +53,4 @@ exports.login = async (req, res) => {
     res.status(500).json({ success: false, message: err });
   }
 };
+exports.generateAccessToken = generateAccessToken
