@@ -1,5 +1,5 @@
 const Razorpay = require('razorpay')
-console.log("asshole")
+
 const Order = require('../models/orders');
 const usercontroller=require(`./usercontroller`)
 console.log(process.env.RAZORPAY_KEY_ID)

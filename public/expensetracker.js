@@ -168,7 +168,7 @@ window.addEventListener("DOMContentLoaded",()=>{
   if(ispremiumuser){
     document.getElementById('rzp-button1').style.display = "none"
     document.querySelector('.message').innerHTML="You are a premium user now"
-    showLeeaderboard()
+    showLeaderboard()
   }
 })
   
@@ -197,7 +197,7 @@ var options={
     document.getElementById('rzp-button1').style.display = "none"
     document.querySelector('.message').innerHTML="You are a premium user now"
     localStorage.setItem('token',res.data.token)
-    showLeeaderboard()
+    showLeaderboard()
   }
 }
 
@@ -207,18 +207,19 @@ rzp.open();
 
 function showLeaderboard()
 {
+  console.log("leaderboard is working")
   const inputElement=document.createElement("input")
   inputElement.type="button"
   inputElement.value="Show leaderboard"
-  inputElement.onclick()=async()=>{
-    const token=localstorage.getItem('token')
-    const userLeaderBoardArray=await axios.get('http://localhost:4000/premium/showLeaderBoard`,{headers:{"Authorization": token}}')
+  inputElement.onclick=async()=>{
+    const token=localStorage.getItem('token')
+    const userLeaderBoardArray=await axios.get(`http://localhost:4000/premium//showLeaderBoard`,{headers:{"Authorization": token}})
     console.log(userLeaderBoardArray)
     var leaderboardElem=document.getElementById('leaderboard')
     leaderboardElem.innerHTML+='<h1> Leader Board</h1>'
-    usedLeaderBoardArray.data.forEach((userDetails)=>{
-      leaderboardElem.innerHTML+='<li>Name-${userDetails.name} Total Expense- ${userDetail.
+    userLeaderBoardArray.data.forEach((userDetails)=>{
+      leaderboardElem.innerHTML+=`<li>Name-${userDetails.name} Total Expense- ${userDetails.total_cost}`
     })
   }
-  document.getElementById("message").appendChild(inputElement)
+  document.getElementById("message1").appendChild(inputElement)
 }
