@@ -1,11 +1,16 @@
 const Expenseuser=require('../models/expensemodels')
+const User = require('../models/user');
+const sequelize = require('../utils/database');
 const path=require("path")
 exports.add=(req,res,next)=>{
     console.log("adding")
    
    // console.error(req.body,'i m body')
     //console.log(req.body.expenseamount)
+    console.log("see the user now",req.user)
+    console.log("see the body now",req.body)
     console.log(req.body.description)
+    console.log("see the id now",req.user.id)
 
    
     Expenseuser.create({
@@ -14,24 +19,27 @@ exports.add=(req,res,next)=>{
         userId:req.user.id
 })
 .then(expense=>{
-    const totalExpense=Number(req.user.totalexpenses)+Number(expenseamount)
+    const totalExpense=Number(req.user.totalexpense)+Number(req.body.expenseamount)
     console.log(totalExpense)
     User.update({
-        totalExpenses:totalExpense
+        totalexpense:totalExpense
     },{
         where:{id:req.user.id}
     }).then(async()=>{
         res.status(200).json({expense:expense})
     })
     .catch(async(err)=>{
+        console.log("failed")
         return res.status(500).json({success:false,error:err})
     })
 })
 .catch(async(err)=>{
+    console.log("failed badly")
     return res.status(500).json({success:false,error:err})
 })
 
 }
+
 exports.delete=(req,res,next)=>{
    // Expenseuser.findByPk(req.params.id)
    const expenseid=req.params.id
