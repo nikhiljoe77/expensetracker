@@ -13,11 +13,22 @@ exports.add=(req,res,next)=>{
         description:req.body.description,
         userId:req.user.id
 })
-.then(result=>{
-res.json(result)
+.then(expense=>{
+    const totalExpense=Number(req.user.totalexpenses)+Number(expenseamount)
+    console.log(totalExpense)
+    User.update({
+        totalExpenses:totalExpense
+    },{
+        where:{id:req.user.id}
+    }).then(async()=>{
+        res.status(200).json({expense:expense})
+    })
+    .catch(async(err)=>{
+        return res.status(500).json({success:false,error:err})
+    })
 })
-.catch(err=>{
-    console.log(err)
+.catch(async(err)=>{
+    return res.status(500).json({success:false,error:err})
 })
 
 }

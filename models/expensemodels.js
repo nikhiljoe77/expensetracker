@@ -16,6 +16,7 @@ const Expenseuser=sequelize.define('expenseuser',{
         type:Sequelize.STRING,
         allownull:false
     },
+    
 },
 {
     timestamps:false

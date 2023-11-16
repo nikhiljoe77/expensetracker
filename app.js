@@ -25,7 +25,7 @@ app.use(`/purchase`, purchaseroute)
 app.use(`/premium`, premiumFeatureRoutes)
 
 
-sequelize.sync()
+sequelize.sync({ force: true })
     .then(() => {
         console.log('Database tables have been created.');
         app.listen(4000, () => {
