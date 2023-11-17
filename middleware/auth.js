@@ -4,11 +4,11 @@ const User = require('../models/user');
 const authenticate = (req, res, next) => {
   try {
     const token = req.header('Authorization');
-    console.log(token);
+    console.log("see the token ",token);
     const user = jwt.verify(token, 'secretencryption');
     console.log('userID>>>>',user.userId);
     User.findByPk(user.userId).then(user => {
-      console.log(JSON.stringify(user));
+      console.log("stringified output for token",JSON.stringify(user));
       req.user = user;
       next();
     }).catch(err => { throw new Error(err)  });

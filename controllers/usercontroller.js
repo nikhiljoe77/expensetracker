@@ -31,6 +31,7 @@ exports.login = async (req, res) => {
   console.log('logging in');
   try {
     const { email, password } = req.body;
+    
     const user = await User.findAll({ where: { email } })
     
     if (user.length > 0) {
