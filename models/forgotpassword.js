@@ -11,10 +11,7 @@ const Forgotpassword = sequelize.define('forgotpassword', {
     },
     isActive: Sequelize.BOOLEAN,
     expiresby: Sequelize.DATE,
-    UserId: {
-        type: Sequelize.INTEGER,
-      
-      }
+   
 })
 
 module.exports = Forgotpassword;

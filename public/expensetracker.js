@@ -28,9 +28,11 @@ function addExpense(event) {
   console.log("addexpense is working")
   const expenseamount = document.getElementById('expenseamount').value;
   const description = document.getElementById('description').value;
+  const category = document.getElementById('category').value;
 const expense = {
     expenseamount:expenseamount,
-    description:description
+    description:description,
+    category:category
   };
 console.log(expense.expenseamount)
 console.log(expense)
@@ -75,7 +77,7 @@ console.log(expense)
     //expenses.forEach((expense, index) => {
       const listItem = document.createElement('li');
       listItem.className = 'list-group-item';
-      listItem.textContent = `${expense.expenseamount}-${expense.description}`;
+      listItem.textContent = `${expense.expenseamount}-${expense.description}-${expense.category}`;
   
       const deleteButton = document.createElement('button');
       deleteButton.className = 'btn btn-danger btn-sm float-right delete';
@@ -120,7 +122,7 @@ function deleteExpense(expense,listItem) {
 
 //Function to edit an expense
 function editExpense(expense,listItem) 
-{
+{ const token = localStorage.getItem('token');
   console.log("EDIT IS WORKING")
   event.preventDefault()
   const submitbutton = document.getElementById('submitButton')
@@ -128,9 +130,19 @@ function editExpense(expense,listItem)
  // const expenses = JSON.parse(localStorage.getItem('expenses'))
   const amountInput = document.getElementById('expenseamount');
   const descriptionInput = document.getElementById('description');
+  const categoryInput = document.getElementById('category');
   amountInput.value=expense.expenseamount;
   descriptionInput.value=expense.description; 
-  axios.delete(`http://localhost:4000/expense/${expense.id}`)
+  categoryInput.value=expense.category; 
+  axios.delete(`http://localhost:4000/expense/deleteexpense/${expense.id}`, {
+    headers: { "Authorization": token }
+  })
+  .then((result)=>{
+    console.log("edited successfully")
+  })
+  .catch((err)=>{
+    console.log("edit failed")
+  })
    //submitbutton.style.display="none"
   // savebutton.style.display="block"
 

@@ -58,6 +58,7 @@ exports.add = async (req, res, next) => {
       const expense = await Expenseuser.create({
         expenseamount: req.body.expenseamount,
         description: req.body.description,
+        category:req.body.category,
         userId: req.user.id
       }, { transaction: t });
   
@@ -182,18 +183,24 @@ exports.delete = async (req, res, next) => {
 
 
 exports.edit=(req,res,next)=>{
+  console.log("you have reached edit")
     const id=req.params.id
     const uexpense=req.params.expense
     const udescription=req.params.description
+    const ucategory=req.params.category
     Expenseuser.findByPk(id)
     .then(expenseuser=>{
         expenseuser.expense=uexpense,
-        expenseuser.description=udescription
+        expenseuser.description=udescription,
+        expenseuser.category=ucategory
     }).then(result=>{
         console.log('updated expense')
         res.json(result)
     })
-    .catch(err=>console.log(err))
+    .catch(err=>{
+      console.log("it has reache the edit error")
+      console.log(err)
+      res.json(err)})
 }
 exports.get = (req, res, next) => {
     console.log("I am getting");

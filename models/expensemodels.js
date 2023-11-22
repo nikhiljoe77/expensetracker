@@ -16,6 +16,10 @@ const Expenseuser=sequelize.define('expenseuser',{
         type:Sequelize.STRING,
         allownull:false
     },
+    category:{
+        type:Sequelize.STRING,
+        allownull:false
+    }
     
 },
 {
