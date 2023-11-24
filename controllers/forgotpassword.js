@@ -22,7 +22,7 @@ exports.forgotpassword = async (req, res) => {
       console.log(obj);
       const forgotResult = await ForgotUser.create(obj);
       console.log("object created", forgotResult);
-      const defaultClient = Sib.ApiClient.instance;
+      /*const defaultClient = Sib.ApiClient.instance;
 
       const apiKey = defaultClient.authentications["api-key"];
       apiKey.apiKey = process.env.SENDINBLUE_API_KEY;
@@ -43,6 +43,42 @@ exports.forgotpassword = async (req, res) => {
         to: req.body.email,
         subject: `Your subject`,
         text: `Your reset link is - http://localhost:4000/password/resetpassword/${uuid}
+
+        This is valid for 1 time only.`,
+      };
+
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Email sent: " + info.response);
+          res.json({ message: "A reset link send to your email id" });
+        }
+      });
+    } else {
+      res.json({ message: "Invalid email id", status: 501 });
+    }*/
+    const defaultClient = Sib.ApiClient.instance;
+
+      const apiKey = defaultClient.authentications["api-key"];
+      apiKey.apiKey = process.env.SENDINBLUE_SMTP_KEY;
+      console.log(`forget 10`);
+      console.log(process.env.SENDINBLUE_SMTP_KEY);
+
+      const transporter = createTransport({
+        host: "smtp-relay.sendinblue.com",
+        port: 587,
+        auth: {
+          user: "satyaprakash5056742@gmail.com",
+          pass: process.env.SENDINBLUE_SMTP_KEY,
+        },
+      });
+      console.log(req.body.email);
+      const mailOptions = {
+        from: "satyaprakash5056742@gmail.com",
+        to: req.body.email,
+        subject: `Your subject`,
+        text: `Your reset link is - http://localhost:3000/password/resetpassword/${uuid}
 
         This is valid for 1 time only.`,
       };

@@ -2,7 +2,7 @@
 //activityon
 //renderExpenseList()
 //const expenses = JSON.parse(localStorage.getItem('expenses')) || [];
-
+document.getElementById('downloadexpense').style.display = "none"
 window.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem('token');
   axios.get("http://localhost:4000/expense/", {
@@ -179,6 +179,7 @@ window.addEventListener("DOMContentLoaded",()=>{
   const ispremiumuser=decodetoken.ispremiumuser
   if(ispremiumuser){
     document.getElementById('rzp-button1').style.display = "none"
+    document.getElementById('downloadexpense').style.display = "block"
     document.querySelector('.message').innerHTML="You are a premium user now"
     showLeaderboard()
   }
@@ -234,4 +235,23 @@ function showLeaderboard()
     })
   }
   document.getElementById("message1").appendChild(inputElement)
+}
+function download(){
+  axios.get('http://localhost:4000/expense/download', { headers: {"Authorization" : token} })
+  .then((response) => {
+      if(response.status === 201){
+          //the bcakend is essentially sending a download link
+          //  which if we open in browser, the file would download
+          var a = document.createElement("a");
+          a.href = response.data.fileUrl;
+          a.download = 'myexpense.csv';
+          a.click();
+      } else {
+          throw new Error(response.data.message)
+      }
+
+  })
+  .catch((err) => {
+      showError(err)
+  });
 }

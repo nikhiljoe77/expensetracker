@@ -2,6 +2,7 @@ const Expenseuser=require('../models/expensemodels')
 const User = require('../models/user');
 const sequelize = require('../utils/database');
 const path=require("path")
+const AWS=require('aws-sdk')
 /*exports.add=(req,res,next)=>{
     console.log("adding")
     const t= await sequelize.transaction()
@@ -213,4 +214,37 @@ exports.get = (req, res, next) => {
         res.status(500).json({ error: 'An error occurred while fetching expenses' });
       });
   };
+function uploadToS3(data,filename){
+  let s3bucket=new AWS.S3({
+    accessKeyId:process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    //Bucket:BUCKET_NAME
 
+  })
+  s3bucket.createBucket(() => {
+    var params = {
+      Bucket: BUCKET_NAME,
+      Key: filename,
+      Body: data
+    };
+
+    s3bucket.upload(params, (err, s3response) => {
+      console.log("uploading to s3")
+      if (err) {
+        console.log("Something went wrong", err);
+      } else {
+        console.log('Success', s3response);
+      }
+    });
+  });
+}
+exports.downloadexpense=async(req,res)=>{
+  console.log("reached download")
+  const expenses=await req.user.get()
+  console.log("this is the user's expense",expenses)
+  const stringifiedExpenses=JSON.stringify(expenses)
+  const filename='Expense.txt'
+  const fileURL=uploadToS3(stringifiedExpenses,filename)
+  res.status(200).json({fileURL,success:true})
+
+}
