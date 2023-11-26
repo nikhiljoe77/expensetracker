@@ -2,22 +2,92 @@
 //activityon
 //renderExpenseList()
 //const expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+
+const url="http://localhost:4000"
 document.getElementById('downloadexpense').style.display = "none"
 window.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem('token');
-  axios.get("http://localhost:4000/expense/", {
-    headers: { "Authorization": token }
-  })
+  axios.get("http://localhost:4000/expense?page=1&&limit=5", {
+    headers: { "Authorization": token }})                             
     .then((response) => {
       console.log("I am the user", response);
-      for (var i = 0; i < response.data.length; i++) {
-        renderExpenseList(response.data[i]);
+      for (var i = 0; i < response.data.results.length; i++) {
+        renderExpenseList(response.data.results[i]);
       }
+      pagination(response.data)
     })
     .catch((err) => {
       console.log(err);
     });
 });
+const prevPage = (num,event) => {
+  event.preventDefault()
+  console.log("this is prev number",num)
+  const itemsList = document.getElementById('items');
+  itemsList.innerHTML=" "
+  const token = localStorage.getItem('token');
+  axios.get(`${url}/expense?page=${num}&&limit=5`, {
+    headers: { "Authorization": token }})
+    .then((response) => {
+      for (var i = 0; i < response.data.results.length; i++) {
+        renderExpenseList(response.data.results[i]);
+      }
+      console.log(response.data);
+      pagination(response.data);
+    })
+    .catch((err) => {
+      console.log(err);
+      console.log(`error in something`);
+    });
+};
+const nextPage = (num) => {
+  event.preventDefault()
+  
+  const itemsList = document.getElementById('items');
+  itemsList.innerHTML=" "
+  const token = localStorage.getItem('token');
+  console.log(token)
+  console.log("this is next number",num)
+  
+  axios.get(`${url}/expense?page=${num}&&limit=5`, {
+    headers: { "Authorization": token }})
+    .then((response) => {
+      for (var i = 0; i < response.data.results.length; i++) {
+        renderExpenseList(response.data.results[i]);
+      }
+      console.log(response.data);
+      pagination(response.data);
+    })
+    .catch((err) => {
+      console.log(err);
+      console.log(`error in something`);
+    });
+};
+const pagination = (data) => {
+  console.log(`76`);
+  console.log(data);
+  
+  const paginationprev = document.getElementById("paginationprev");
+  paginationprev.innerHTML = "";
+  const paginationnext = document.getElementById("paginationnext");
+  paginationnext.innerHTML = "";
+  if (data.previous) {
+   
+    console.log("prev page from pagination ", data.previous.page);
+    const previousPageButton = document.createElement("button");
+    previousPageButton.textContent = data.previous.page;    
+    previousPageButton.addEventListener("click",(event)=>prevPage(data.previous.page,event));
+    paginationnext.appendChild(previousPageButton);
+  }
+
+  if (data.next) {
+    console.log("next page from pagination ", data.next.page);
+    const nextPageButton = document.createElement("button");
+    nextPageButton.textContent = data.next.page;
+    nextPageButton.addEventListener("click",()=>nextPage(data.next.page));
+    paginationnext.appendChild(nextPageButton);
+};
+}
 
 var submitButton = document.getElementById('submitButton')
 submitButton.addEventListener("click",addExpense)

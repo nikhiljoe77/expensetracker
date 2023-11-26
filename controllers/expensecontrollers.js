@@ -2,7 +2,8 @@ const Expenseuser=require('../models/expensemodels')
 const User = require('../models/user');
 const sequelize = require('../utils/database');
 const path=require("path")
-const AWS=require('aws-sdk')
+const AWS=require('aws-sdk');
+const { Model } = require('sequelize');
 /*exports.add=(req,res,next)=>{
     console.log("adding")
     const t= await sequelize.transaction()
@@ -202,7 +203,7 @@ exports.edit=(req,res,next)=>{
       console.log("it has reache the edit error")
       console.log(err)
       res.json(err)})
-}
+}/*
 exports.get = (req, res, next) => {
     console.log("I am getting");
     Expenseuser.findAll({where:{userId:req.user.id}})                                           
@@ -213,7 +214,7 @@ exports.get = (req, res, next) => {
         console.log(err);
         res.status(500).json({ error: 'An error occurred while fetching expenses' });
       });
-  };
+  };*/
 function uploadToS3(data,filename){
   let s3bucket=new AWS.S3({
     accessKeyId:process.env.AWS_ACCESS_KEY_ID,
@@ -248,3 +249,46 @@ exports.downloadexpense=async(req,res)=>{
   res.status(200).json({fileURL,success:true})
 
 }
+exports.get = async (req, res) => {//here also it might be wrong
+ // console.log("see the req",req)
+  const page=parseInt(req.query.page)
+  const limit=parseInt(req.query.limit)
+  console.log("this is the page",page)
+  console.log("this is the limit",limit)
+  const startIndex=(page-1)*limit
+  const endIndex=page*limit
+  console.log("this is the name and userid ",req.user.name,req.user.id)
+  const results={}
+  try{
+  const expenseuser = await Expenseuser.findAll({
+    where: {  userId: req.user.id }
+  });
+  console.log("this is expenseuser",JSON.stringify(expenseuser))
+  console.log("this is the length",expenseuser.length)
+  if(endIndex<expenseuser.length)                                      //this is wrong for length 
+  {
+    results.next={
+      page:page+1,
+      limit:limit
+    }
+  }
+  if(startIndex>0)
+  {
+    results.previous={
+      page:page-1,
+      limit:limit
+    }
+  }
+  results.results=expenseuser.slice(startIndex,endIndex)
+  //console.log( "find the results",results.results)
+  res.json(results)
+}
+  /*results.results=model.slice(startIndex,endIndex)
+  res.paginatedresults=results//check this also*/
+
+  catch(e){
+    res.status(500).json({message:e.message})
+
+  }
+}
+  
