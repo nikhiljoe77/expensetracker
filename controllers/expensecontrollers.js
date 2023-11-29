@@ -219,33 +219,38 @@ function uploadToS3(data,filename){
   let s3bucket=new AWS.S3({
     accessKeyId:process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    //Bucket:BUCKET_NAME
+    
 
   })
-  s3bucket.createBucket(() => {
+  
     var params = {
-      Bucket: BUCKET_NAME,
+      Bucket: process.env.BUCKET_NAME,
       Key: filename,
-      Body: data
+      Body: data,
+      ACL:'public-read'
     };
 
-    s3bucket.upload(params, (err, s3response) => {
-      console.log("uploading to s3")
-      if (err) {
-        console.log("Something went wrong", err);
-      } else {
-        console.log('Success', s3response);
+    return new Promise((res,rej)=>s3bucket.upload(params, (err, s3response)=>{
+      if(err){
+          console.log('something went wrong',err)
+          rej(err)
+      }else{
+          console.log('success',s3response)
+          res(s3response.Location);
+          
       }
-    });
-  });
+  }))
+
 }
+
 exports.downloadexpense=async(req,res)=>{
   console.log("reached download")
   const expenses=await req.user.get()
   console.log("this is the user's expense",expenses)
   const stringifiedExpenses=JSON.stringify(expenses)
   const filename='Expense.txt'
-  const fileURL=uploadToS3(stringifiedExpenses,filename)
+  const fileURL=await uploadToS3(stringifiedExpenses,filename)
+  console.log(fileURL)
   res.status(200).json({fileURL,success:true})
 
 }

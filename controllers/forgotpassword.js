@@ -2,35 +2,37 @@ const Sib = require("sib-api-v3-sdk");
 const path = require("path");
 const { createTransport } = require("nodemailer");
 const User = require("../models/user");
-const ForgotUser = require("../models/forgotpassword");
+const Forgotpassword = require("../models/forgotpassword");
 const { v4: uuidv4 } = require("uuid");
+const bcrypt = require('bcrypt');
 
 exports.forgotpassword = async (req, res) => {
+  console.log("this is the request",req)
   try {
     const result = await User.findOne({
-      email: req.body.email,
+      where: { email: req.body.email }
     });
-    console.log(result);
+    console.log("this is result",result);
     const uuid = uuidv4();
     console.log(uuid);
     if (result !== null) {
       const obj = {
-        UserId: result.id,
+        userId: result.id,
         isActive: true,
         uuid: uuid,
       };
       console.log(obj);
-      const forgotResult = await ForgotUser.create(obj);
+      const forgotResult = await Forgotpassword.create(obj);
       console.log("object created", forgotResult);
-      /*const defaultClient = Sib.ApiClient.instance;
+    const defaultClient = Sib.ApiClient.instance;
 
       const apiKey = defaultClient.authentications["api-key"];
       apiKey.apiKey = process.env.SENDINBLUE_API_KEY;
       console.log(`forget 10`);
-      console.log("this is the api key", process.env.SENDINBLUE_API_KEY);
+      console.log(process.env.SENDINBLUE_SMTP_KEY);
 
       const transporter = createTransport({
-        host: "smtp-relay.brevo.com",
+        host: "smtp-relay.sendinblue.com",
         port: 587,
         auth: {
           user: "DAEMOSARES@GMAIL.COM",
@@ -39,7 +41,7 @@ exports.forgotpassword = async (req, res) => {
       });
       console.log(req.body.email);
       const mailOptions = {
-        from: "daemosares@gmail.com",
+        from: "DAEMOSARES@GMAIL.COM",
         to: req.body.email,
         subject: `Your subject`,
         text: `Your reset link is - http://localhost:4000/password/resetpassword/${uuid}
@@ -52,43 +54,7 @@ exports.forgotpassword = async (req, res) => {
           console.log(error);
         } else {
           console.log("Email sent: " + info.response);
-          res.json({ message: "A reset link send to your email id" });
-        }
-      });
-    } else {
-      res.json({ message: "Invalid email id", status: 501 });
-    }*/
-    const defaultClient = Sib.ApiClient.instance;
-
-      const apiKey = defaultClient.authentications["api-key"];
-      apiKey.apiKey = process.env.SENDINBLUE_SMTP_KEY;
-      console.log(`forget 10`);
-      console.log(process.env.SENDINBLUE_SMTP_KEY);
-
-      const transporter = createTransport({
-        host: "smtp-relay.sendinblue.com",
-        port: 587,
-        auth: {
-          user: "satyaprakash5056742@gmail.com",
-          pass: process.env.SENDINBLUE_SMTP_KEY,
-        },
-      });
-      console.log(req.body.email);
-      const mailOptions = {
-        from: "satyaprakash5056742@gmail.com",
-        to: req.body.email,
-        subject: `Your subject`,
-        text: `Your reset link is - http://localhost:3000/password/resetpassword/${uuid}
-
-        This is valid for 1 time only.`,
-      };
-
-      transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log("Email sent: " + info.response);
-          res.json({ message: "A reset link send to your email id" });
+          res.status(202).json({ message: "A reset link send to your email id" });
         }
       });
     } else {
@@ -99,10 +65,12 @@ exports.forgotpassword = async (req, res) => {
   }
 };
 exports.resetpassword = (req, res) => {
-  const id = req.params.id;
-  Forgotpassword.findOne({ where: { id } }).then(forgotpasswordrequest => {
+ // console.log("this is the request",req)
+  const id = req.params.uuid;
+  console.log("this is the id",id)
+  Forgotpassword.findOne({ where: { uuid:id} }).then(forgotpasswordrequest => {
     if (forgotpasswordrequest) {
-      forgotpasswordrequest.update({ active: false });
+      forgotpasswordrequest.update({ isActive: false });
       res.status(200).send(`<html>
                                   <script>
                                       function formsubmitted(e){
@@ -127,9 +95,12 @@ exports.resetpassword = (req, res) => {
 exports.updatepassword = (req, res) => {
 
   try {
+   // console.log("this is request inside reset",req)
     const { newpassword } = req.query;
-    const { resetpasswordid } = req.params;
-    Forgotpassword.findOne({ where: { id: resetpasswordid } }).then(resetpasswordrequest => {
+    console.log("this is the new password",newpassword)
+    const  resetpasswordid  = req.params.uuid;
+    console.log("this is the  resetpassword",req.params,resetpasswordid)
+    Forgotpassword.findOne({ where: { uuid: resetpasswordid } }).then(resetpasswordrequest => {
       User.findOne({ where: { id: resetpasswordrequest.userId } }).then(user => {
         // console.log('userDetails', user)
         if (user) {

@@ -4,10 +4,13 @@
 //const expenses = JSON.parse(localStorage.getItem('expenses')) || [];
 
 const url="http://localhost:4000"
+const limit=document.getElementById("limit")
 document.getElementById('downloadexpense').style.display = "none"
+limit.addEventListener("change", (e) => {
+  localStorage.setItem("offset", e.target.value);
 window.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem('token');
-  axios.get("http://localhost:4000/expense?page=1&&limit=5", {
+  axios.get("http://localhost:4000/expense?page=1&&limit=${e.target.value}", {
     headers: { "Authorization": token }})                             
     .then((response) => {
       console.log("I am the user", response);
@@ -20,6 +23,7 @@ window.addEventListener("DOMContentLoaded", () => {
       console.log(err);
     });
 });
+})
 const prevPage = (num,event) => {
   event.preventDefault()
   console.log("this is prev number",num)
@@ -40,7 +44,7 @@ const prevPage = (num,event) => {
       console.log(`error in something`);
     });
 };
-const nextPage = (num) => {
+const nextPage = (num,event) => {
   event.preventDefault()
   
   const itemsList = document.getElementById('items');
@@ -84,7 +88,7 @@ const pagination = (data) => {
     console.log("next page from pagination ", data.next.page);
     const nextPageButton = document.createElement("button");
     nextPageButton.textContent = data.next.page;
-    nextPageButton.addEventListener("click",()=>nextPage(data.next.page));
+    nextPageButton.addEventListener("click",()=>nextPage(data.next.page,event));
     paginationnext.appendChild(nextPageButton);
 };
 }
@@ -254,6 +258,9 @@ window.addEventListener("DOMContentLoaded",()=>{
     showLeaderboard()
   }
 })
+document.getElementById('downloadexpense').addEventListener("click",()=>{
+  download()
+})
   
 document.getElementById('rzp-button1').onclick=async function(e){
   e.preventDefault()
@@ -307,21 +314,27 @@ function showLeaderboard()
   document.getElementById("message1").appendChild(inputElement)
 }
 function download(){
+  const token = localStorage.getItem('token');
+  event.preventDefault()
   axios.get('http://localhost:4000/expense/download', { headers: {"Authorization" : token} })
   .then((response) => {
-      if(response.status === 201){
+    console.log(response)
+      if(response.status === 200){
+        console.log("got the file dude")
           //the bcakend is essentially sending a download link
           //  which if we open in browser, the file would download
           var a = document.createElement("a");
           a.href = response.data.fileUrl;
           a.download = 'myexpense.csv';
-          a.click();
+          setTimeout(() => {
+            a.click();
+          }, 100);
       } else {
           throw new Error(response.data.message)
       }
 
   })
   .catch((err) => {
-      showError(err)
+      window.alert(err)
   });
 }

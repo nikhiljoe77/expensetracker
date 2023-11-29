@@ -9,7 +9,7 @@ exports.purchaserpremium = async (req, res) => {
             key_id: process.env.RAZORPAY_KEY_ID,
             key_secret: process.env.RAZORPAY_KEY_SECRET
         })
-        const amount = 2500
+        const amount = 250000
         console.log(process.env.RAZORPAY_KEY_ID);
         console.log(process.env.RAZORPAY_KEY_SECRET);
 
