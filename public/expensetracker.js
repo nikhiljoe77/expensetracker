@@ -6,11 +6,13 @@
 const url="http://localhost:4000"
 const limit=document.getElementById("limit")
 document.getElementById('downloadexpense').style.display = "none"
-limit.addEventListener("change", (e) => {
+limit.addEventListener("change", (e) =>{
+  const itemsList = document.getElementById('items');
+   itemsList.innerHTML = ''; // Clear previous list items
   localStorage.setItem("offset", e.target.value);
-window.addEventListener("DOMContentLoaded", () => {
+  console.log(e.target.value)
   const token = localStorage.getItem('token');
-  axios.get("http://localhost:4000/expense?page=1&&limit=${e.target.value}", {
+  axios.get(`http://localhost:4000/expense?page=1&&limit=${e.target.value}`, {
     headers: { "Authorization": token }})                             
     .then((response) => {
       console.log("I am the user", response);
@@ -23,6 +25,21 @@ window.addEventListener("DOMContentLoaded", () => {
       console.log(err);
     });
 });
+window.addEventListener("DOMContentLoaded", () => {
+  let offset  = localStorage.getItem('offset');
+  const token = localStorage.getItem('token');
+  axios.get(`http://localhost:4000/expense?page=1&&limit=${offset}`, {
+    headers: { "Authorization": token }})                             
+    .then((response) => {
+      console.log("I am the user", response);
+      for (var i = 0; i < response.data.results.length; i++) {
+        renderExpenseList(response.data.results[i]);
+      }
+      pagination(response.data)
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 })
 const prevPage = (num,event) => {
   event.preventDefault()
@@ -321,11 +338,13 @@ function download(){
     console.log(response)
       if(response.status === 200){
         console.log("got the file dude")
+        //console.log(response)
           //the bcakend is essentially sending a download link
           //  which if we open in browser, the file would download
           var a = document.createElement("a");
-          a.href = response.data.fileUrl;
-          a.download = 'myexpense.csv';
+          a.href = response.data.fileURL;
+          console.log(response.data.fileURL)
+         // a.download = 'myexpense.csv';
           setTimeout(() => {
             a.click();
           }, 100);

@@ -1,6 +1,9 @@
 const expenseroutes = require('./routes/expenseroutes')
 const passwordroutes=require(`./routes/forgotpassword`)
 const Forgotpassword = require('./models/forgotpassword');
+const helmet=require("helmet")
+const morgan=require("morgan")
+const fs=require("fs")
 require('dotenv').config();
 const sequelize = require('./utils/database');
 const User = require('./models/user');
@@ -14,8 +17,11 @@ const userroute = require(`./routes/userroute`)
 const purchaseroute = require(`./routes/purchase`)
 const premiumFeatureRoutes = require(`./routes/premiumFeature`)
 const app = express()
+const accessLogStream=fs.createWriteStream(path.join(__dirname,'access.log'),{flags:'a'})
 app.use(cors())
 app.use(express.json())
+app.use(helmet())
+app.use(morgan('combined',{stream:accessLogStream}))
 User.hasMany(Expenseuser)
 Expenseuser.belongsTo(User)
 User.hasMany(Order)
