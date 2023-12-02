@@ -39,7 +39,7 @@ app.use(`/password`, passwordroutes)
 sequelize.sync()
     .then(() => {
         console.log('Database tables have been created.');
-        app.listen(4000, () => {
+        app.listen(process.env.PORT, () => {
             console.log("Server is running");
         });
     })

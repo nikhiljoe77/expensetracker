@@ -2,6 +2,7 @@
 //activityon
 //renderExpenseList()
 //const expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+let offset  = localStorage.getItem('offset');
 
 const url="http://localhost:4000"
 const limit=document.getElementById("limit")
@@ -26,7 +27,7 @@ limit.addEventListener("change", (e) =>{
     });
 });
 window.addEventListener("DOMContentLoaded", () => {
-  let offset  = localStorage.getItem('offset');
+ // let offset  = localStorage.getItem('offset');
   const token = localStorage.getItem('token');
   axios.get(`http://localhost:4000/expense?page=1&&limit=${offset}`, {
     headers: { "Authorization": token }})                             
@@ -42,12 +43,13 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 })
 const prevPage = (num,event) => {
+  //let offset  = localStorage.getItem('offset');
   event.preventDefault()
   console.log("this is prev number",num)
   const itemsList = document.getElementById('items');
   itemsList.innerHTML=" "
   const token = localStorage.getItem('token');
-  axios.get(`${url}/expense?page=${num}&&limit=5`, {
+  axios.get(`${url}/expense?page=${num}&&limit=${offset}`, {
     headers: { "Authorization": token }})
     .then((response) => {
       for (var i = 0; i < response.data.results.length; i++) {
@@ -63,14 +65,14 @@ const prevPage = (num,event) => {
 };
 const nextPage = (num,event) => {
   event.preventDefault()
-  
+  //let offset  = localStorage.getItem('offset');
   const itemsList = document.getElementById('items');
   itemsList.innerHTML=" "
   const token = localStorage.getItem('token');
   console.log(token)
   console.log("this is next number",num)
   
-  axios.get(`${url}/expense?page=${num}&&limit=5`, {
+  axios.get(`${url}/expense?page=${num}&&limit=${offset}`, {
     headers: { "Authorization": token }})
     .then((response) => {
       for (var i = 0; i < response.data.results.length; i++) {
