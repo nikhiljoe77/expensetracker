@@ -1,6 +1,6 @@
 let signupbutton=document.getElementById("submit")
 signupbutton.addEventListener("click",details)
-const url = "http://localhost:4000"
+const url=http://35.154.157.46:4000
 console.log(url)
 function details(event)
 {

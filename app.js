@@ -1,8 +1,4 @@
 require('dotenv').config();
-console.log("process parameters are", process.env.DATABASE_NAME,
-process.env.DATABASE_USERNAME,
-process.env.DATABASE_PASSWORD,)
-console.log("keys are",process.env.RAZORPAY_KEY_ID)
 const expenseroutes = require('./routes/expenseroutes')
 const passwordroutes=require(`./routes/forgotpassword`)
 const Forgotpassword = require('./models/forgotpassword');
