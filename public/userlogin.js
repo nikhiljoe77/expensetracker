@@ -1,6 +1,6 @@
 let signupbutton=document.getElementById("submit")
 signupbutton.addEventListener("click",details)
-const url=http://35.154.157.46:4000
+const url='http://localhost:4000'
 console.log(url)
 function details(event)
 {
@@ -12,12 +12,12 @@ function details(event)
         email:email
     }
     console.log(user)
-    axios.post(`${url}/login`, user)
+    axios.post(`/user/login`, user)
     .then((response)=>{
         alert(response.data.message);
         console.log(response.data)
         localStorage.setItem('token',response.data.token)
-        window.location.href="expensetracker.html"
+        window.location.href="/expensetracker"
        
     })
     .catch((err)=>{

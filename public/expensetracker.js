@@ -2,9 +2,9 @@
 //activityon
 //renderExpenseList()
 //const expenses = JSON.parse(localStorage.getItem('expenses')) || [];
-let offset  = localStorage.getItem('offset');
+//let offset  = localStorage.getItem('offset');
 
-const url=http://35.154.157.46:4000
+const url='http://localhost:4000'
 const limit=document.getElementById("limit")
 document.getElementById('downloadexpense').style.display = "none"
 limit.addEventListener("change", (e) =>{
@@ -13,7 +13,7 @@ limit.addEventListener("change", (e) =>{
   localStorage.setItem("offset", e.target.value);
   console.log(e.target.value)
   const token = localStorage.getItem('token');
-  axios.get(`${url}/expense?page=1&&limit=${e.target.value}`, {
+  axios.get(`/expense?page=1&&limit=${e.target.value}`, {
     headers: { "Authorization": token }})                             
     .then((response) => {
       console.log("I am the user", response);
@@ -27,9 +27,9 @@ limit.addEventListener("change", (e) =>{
     });
 });
 window.addEventListener("DOMContentLoaded", () => {
- // let offset  = localStorage.getItem('offset');
+  let offset  = localStorage.getItem('offset');
   const token = localStorage.getItem('token');
-  axios.get(`${url}/expense?page=1&&limit=${offset}`, {
+  axios.get(`/expense?page=1&&limit=${offset}`, {
     headers: { "Authorization": token }})                             
     .then((response) => {
       console.log("I am the user", response);
@@ -43,13 +43,13 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 })
 const prevPage = (num,event) => {
-  //let offset  = localStorage.getItem('offset');
+  let offset  = localStorage.getItem('offset');
   event.preventDefault()
   console.log("this is prev number",num)
   const itemsList = document.getElementById('items');
   itemsList.innerHTML=" "
   const token = localStorage.getItem('token');
-  axios.get(`${url}/expense?page=${num}&&limit=${offset}`, {
+  axios.get(`/expense?page=${num}&&limit=${offset}`, {
     headers: { "Authorization": token }})
     .then((response) => {
       for (var i = 0; i < response.data.results.length; i++) {
@@ -65,14 +65,14 @@ const prevPage = (num,event) => {
 };
 const nextPage = (num,event) => {
   event.preventDefault()
-  //let offset  = localStorage.getItem('offset');
+  let offset  = localStorage.getItem('offset');
   const itemsList = document.getElementById('items');
   itemsList.innerHTML=" "
   const token = localStorage.getItem('token');
   console.log(token)
   console.log("this is next number",num)
   
-  axios.get(`${url}/expense?page=${num}&&limit=${offset}`, {
+  axios.get(`/expense?page=${num}&&limit=${offset}`, {
     headers: { "Authorization": token }})
     .then((response) => {
       for (var i = 0; i < response.data.results.length; i++) {
@@ -134,7 +134,7 @@ console.log(expense)
   /*expenses.push(expense);
   saveExpensesToLocalStorage();*/
   const token = localStorage.getItem('token');
-  axios.post("${url}/expense/",expense, {
+  axios.post("/expense/",expense, {
     headers: { "Authorization": token }
   })
   .then((response) => {
@@ -198,7 +198,7 @@ function deleteExpense(expense,listItem) {
     renderExpenseList(); 
   }*/
   console.log("delete is working")
-  axios.delete(`${url}/expense/deleteexpense/${expense.id}`, {
+  axios.delete(`/expense/deleteexpense/${expense.id}`, {
     headers: { "Authorization": token }
   })
   .then((response) => {
@@ -227,7 +227,7 @@ function editExpense(expense,listItem)
   amountInput.value=expense.expenseamount;
   descriptionInput.value=expense.description; 
   categoryInput.value=expense.category; 
-  axios.delete(`${url}/expense/deleteexpense/${expense.id}`, {
+  axios.delete(`/expense/deleteexpense/${expense.id}`, {
     headers: { "Authorization": token }
   })
   .then((result)=>{
@@ -284,7 +284,7 @@ document.getElementById('downloadexpense').addEventListener("click",()=>{
 document.getElementById('rzp-button1').onclick=async function(e){
   e.preventDefault()
   const token = localStorage.getItem('token');
-  const response=await axios.get(`${url}/purchase/premiummembership`,{headers:{"Authorization": token}})
+  const response=await axios.get(`/purchase/premiummembership`,{headers:{"Authorization": token}})
   console.log("viewing response",response)
 
 
@@ -295,7 +295,7 @@ var options={
  let paymentId
   paymentId = response.razorpay_payment_id ? response.razorpay_payment_id : 1; 
   console.log("this is the id",paymentId)
-    const res=await axios.post(`${url}/purchase/updatetransactionstatus`,{
+    const res=await axios.post(`/purchase/updatetransactionstatus`,{
       order_id:options.order_id,
       payment_id:paymentId,
 
@@ -322,7 +322,7 @@ function showLeaderboard()
   inputElement.value="Show leaderboard"
   inputElement.onclick=async()=>{
     const token=localStorage.getItem('token')
-    const userLeaderBoardArray=await axios.get(`${url}/premium//showLeaderBoard`,{headers:{"Authorization": token}})
+    const userLeaderBoardArray=await axios.get(`/premium//showLeaderBoard`,{headers:{"Authorization": token}})
     console.log(userLeaderBoardArray)
     var leaderboardElem=document.getElementById('leaderboard')
     leaderboardElem.innerHTML+='<h1> Leader Board</h1>'
@@ -335,7 +335,7 @@ function showLeaderboard()
 function download(){
   const token = localStorage.getItem('token');
   event.preventDefault()
-  axios.get('${url}/expense/download', { headers: {"Authorization" : token} })
+  axios.get('/expense/download', { headers: {"Authorization" : token} })
   .then((response) => {
     console.log(response)
       if(response.status === 200){

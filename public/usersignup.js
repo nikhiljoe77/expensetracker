@@ -1,6 +1,6 @@
 let signupbutton=document.getElementById("submit")
 signupbutton.addEventListener("click",details)
-const url=http://35.154.157.46:4000
+const url='http://localhost:4000'
 function details(event)
 {
     event.preventDefault();
@@ -13,7 +13,7 @@ function details(event)
         email:email
     }
     console.log(user)
-    axios.post(`${url}/signup`, user)
+    axios.post(`/user/signup`, user)
     .then((response)=>{
         console.log("posted")
         alert(response.data.message);
