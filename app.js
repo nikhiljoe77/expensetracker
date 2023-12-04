@@ -1,8 +1,10 @@
 require('dotenv').config();
+
+const mainPageRouter = require('./routes/mainpage');
 const expenseroutes = require('./routes/expenseroutes')
 const passwordroutes=require(`./routes/forgotpassword`)
 const Forgotpassword = require('./models/forgotpassword');
-const helmet=require("helmet")
+
 const morgan=require("morgan")
 const fs=require("fs")
 const sequelize = require('./utils/database');
@@ -20,7 +22,7 @@ const app = express()
 const accessLogStream=fs.createWriteStream(path.join(__dirname,'access.log'),{flags:'a'})
 app.use(cors())
 app.use(express.json())
-app.use(helmet())
+
 app.use(morgan('combined',{stream:accessLogStream}))
 User.hasMany(Expenseuser)
 Expenseuser.belongsTo(User)
@@ -29,7 +31,8 @@ Order.belongsTo(User)
 User.hasMany(Forgotpassword);
 Forgotpassword.belongsTo(User);
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/', userroute)
+app.use('/', mainPageRouter)
+app.use('/user', userroute)
 app.use('/expense', expenseroutes)
 app.use(`/purchase`, purchaseroute)
 app.use(`/premium`, premiumFeatureRoutes)
