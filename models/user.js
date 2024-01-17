@@ -21,10 +21,12 @@ const User = sequelize.define('user', {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  ispremiumuser: Sequelize.BOOLEAN,
+  ispremiumuser: {type:Sequelize.BOOLEAN,
+    defaultValue: false
+  },
   totalexpense: {
     type: Sequelize.INTEGER,
-    defaultValue: 0, // Note: It should be 'defaultValue' with a lowercase 'v'
+    defaultValue: 0 
   },
 }, {
   timestamps: false,
